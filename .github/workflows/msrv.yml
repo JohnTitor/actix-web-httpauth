@@ -30,17 +30,17 @@ jobs:
         uses: actions/cache@v1
         with:
           path: ~/.cargo/registry
-          key: msrv-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
+          key: msrv-cargo-registry-trimmed-${{ hashFiles('**/Cargo.lock') }}
       - name: Cache cargo index
         uses: actions/cache@v1
         with:
           path: ~/.cargo/git
-          key: msrv-cargo-index-${{ hashFiles('**/Cargo.lock') }}
+          key: msrv-cargo-index-trimmed-${{ hashFiles('**/Cargo.lock') }}
       - name: Cache cargo build
         uses: actions/cache@v1
         with:
           path: target
-          key: msrv-cargo-build-${{ hashFiles('**/Cargo.lock') }}
+          key: msrv-cargo-build-trimmed-${{ hashFiles('**/Cargo.lock') }}
 
       - name: checks
         uses: actions-rs/cargo@v1
@@ -53,3 +53,8 @@ jobs:
         with:
           command: test
           args: --all --no-fail-fast -- --nocapture
+
+      - name: Clear the cargo caches
+        run: |
+          cargo install cargo-cache --no-default-features --features ci-autoclean
+          cargo-cache

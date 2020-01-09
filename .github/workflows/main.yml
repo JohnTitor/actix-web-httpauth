@@ -50,17 +50,17 @@ jobs:
         uses: actions/cache@v1
         with:
           path: ~/.cargo/registry
-          key: ${{ matrix.version }}-${{ matrix.toolchain }}-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
+          key: ${{ matrix.version }}-${{ matrix.toolchain }}-cargo-registry-trimmed-${{ hashFiles('**/Cargo.lock') }}
       - name: Cache cargo index
         uses: actions/cache@v1
         with:
           path: ~/.cargo/git
-          key: ${{ matrix.version }}-${{ matrix.toolchain }}-cargo-index-${{ hashFiles('**/Cargo.lock') }}
+          key: ${{ matrix.version }}-${{ matrix.toolchain }}-cargo-index-trimmed-${{ hashFiles('**/Cargo.lock') }}
       - name: Cache cargo build
         uses: actions/cache@v1
         with:
           path: target
-          key: ${{ matrix.version }}-${{ matrix.toolchain }}-cargo-build-${{ hashFiles('**/Cargo.lock') }}
+          key: ${{ matrix.version }}-${{ matrix.toolchain }}-cargo-build-trimmed-${{ hashFiles('**/Cargo.lock') }}
 
       - name: checks
         uses: actions-rs/cargo@v1
@@ -81,3 +81,8 @@ jobs:
         with:
           command: test
           args: --all --all-features --no-fail-fast -- --nocapture
+
+      - name: Clear the cargo caches
+        run: |
+          cargo install cargo-cache --no-default-features --features ci-autoclean
+          cargo-cache
